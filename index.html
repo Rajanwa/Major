@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robotic Arms Defect Detection Model - Home</title>
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary-color: #f8fafc;
+      --text-color: #1e293b;
+      --text-light: #64748b;
+      --bg-light: #f1f5f9;
+      --bg-dark: #0f172a;
+      --success: #10b981;
+      --danger: #ef4444;
+      --border-color: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+      --max-width: 1280px;
+      --radius: 0.75rem;
+      --gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(to bottom, var(--bg-light), white);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    img:hover {
+      transform: scale(1.05);
+    }
+
+    .container {
+      width: 90%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulse 2s infinite;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      font-weight: 600;
+      color: var(--text-color);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient);
+      animation: slideIn 0.3s ease;
+    }
+
+    .menu-icon {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background: var(--gradient);
+      margin: 3px 0;
+      transition: var(--transition);
+      border-radius: 2px;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: var(--gradient);
+      color: white;
+      padding: 6rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      animation: pulse 8s infinite;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-text {
+      animation: slideInLeft 1s ease-out;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero .highlight {
+      background: linear-gradient(45deg, #ffffff, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-image img {
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn svg {
+      margin-left: 0.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .btn:hover svg {
+      transform: translateX(5px);
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background: white;
+      color: var(--primary-color);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-light:hover {
+      background: var(--bg-light);
+      transform: translateY(-2px);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 0;
+      background: linear-gradient(to bottom, white, var(--bg-light));
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+    }
+
+    .section-header p {
+      font-size: 1.125rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .feature-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      transition: all 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(transparent, rgba(59, 130, 246, 0.1));
+      transition: 0.5s;
+    }
+
+    .feature-card:hover::before {
+      top: 0;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-color);
+    }
+
+    .feature-icon {
+      width: 3.5rem;
+      height: 3.5rem;
+      background: var(--gradient);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      color: white;
+      animation: bounce 2s infinite;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+    }
+
+    .feature-card p {
+      color: var(--text-light);
+    }
+
+    /* CTA Section */
+    .cta {
+      background: var(--gradient);
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"%3E%3C/path%3E%3C/svg%3E') no-repeat bottom;
+      animation: wave 10s infinite linear;
+    }
+
+    .cta h2 {
+      font-size: 2.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Page Header */
+    .page-header {
+      background: var(--gradient);
+      padding: 3rem 0;
+      text-align: center;
+      color: white;
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    .page-header h1 {
+      font-size: 2.75rem;
+      -webkit-text-fill-color: white;
+    }
+
+    .page-header p {
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Project Background */
+    .project-background {
+      padding: 5rem 0;
+      background: linear-gradient(to right, var(--bg-light), white);
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .image-container img {
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .image-badge {
+      position: absolute;
+      bottom: -1.5rem;
+      right: -1.5rem;
+      background: var(--gradient);
+      padding: 1rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+
+    /* Model Info */
+    .model-info {
+      padding: 5rem 0;
+      background: linear-gradient(to bottom, var(--bg-light), white);
+    }
+
+    .model-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.5s ease;
+    }
+
+    .model-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .spec-list li {
+      display: flex;
+      align-items: flex-start;
+      padding: 0.5rem 0;
+      transition: background 0.3s ease;
+    }
+
+    .spec-list li:hover {
+      background: rgba(59, 130, 246, 0.05);
+      border-radius: var(--radius);
+    }
+
+    .spec-list svg {
+      color: var(--primary-color);
+      margin-right: 0.75rem;
+      min-width: 20px;
+      animation: spin 2s linear infinite;
+    }
+
+    .defect-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .defect-type {
+      background: var(--gradient);
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    .defect-type:hover {
+      transform: scale(1.05);
+    }
+
+    .methodology {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      padding: 5rem 0;
+      background: linear-gradient(to bottom, white, var(--bg-light));
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+
+    .contact-form-container h2,
+    .contact-info-container h2 {
+      font-size: 1.75rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .contact-info-container {
+      background: white;
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      transition: transform 0.5s ease;
+    }
+
+    .contact-info-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .contact-item {
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 0;
+      transition: background 0.3s ease;
+    }
+
+    .contact-item:hover {
+      background: rgba(59, 130, 246, 0.05);
+      border-radius: var(--radius);
+    }
+
+    .contact-icon {
+      color: var(--primary-color);
+      min-width: 24px;
+      animation: bounce 2s infinite;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-dark);
+      color: white;
+      padding: 4rem 0 2rem;
+      margin-top: auto;
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="rgba(255,255,255,0.05)" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,176C384,171,480,181,576,192C672,203,768,213,864,213.3C960,213,1056,203,1152,192C1248,181,1344,171,1392,165.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"%3E%3C/path%3E%3C/svg%3E') no-repeat top;
+      animation: wave 12s infinite linear;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-section h3 {
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary-color);
+      transform: translateX(5px);
+    }
+
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-legal a {
+      color: rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease;
+    }
+
+    .footer-legal a:hover {
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes wave {
+      0% { background-position: 0 0; }
+      100% { background-position: 1440px 0; }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image {
+        display: none;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-icon {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: -100%;
+        width: 100%;
+        flex-direction: column;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        transition: var(--transition);
+        gap: 1.5rem;
+        z-index: 999;
+      }
+
+      .nav-links.show {
+        left: 0;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-legal {
+        justify-content: center;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <div class="navbar">
+      <div class="logo">Robotic Arms Defect Detection Model</div>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+          <li><a href="{{ url_for('about') }}">About</a></li>
+          <li><a href="{{ url_for('home') }}">Model</a></li>
+        </ul>
+      </nav>
+      <div class="menu-icon" id="menuIcon">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text animate-slide-in">
+          <h1>Advanced Robotic Arm <span class="highlight">Defect Detection</span></h1>
+          <p>
+            Enhance manufacturing quality with our AI-powered vision system. Detect defects in real-time with
+            industry-leading accuracy and reliability.
+          </p>
+          <div class="button-group">
+            
+            <li><a href="{{ url_for('about') }}" class="active">Learn More</a></li>
+            
+            <li><a href="{{ url_for('home') }}">Try Our Model</a></li>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e" alt="Robotic Arm">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Key Features</h2>
+        <p>Our system offers cutting-edge capabilities for industrial automation</p>
+      </div>
+
+      <div class="feature-cards">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <h3>Real-time Detection</h3>
+          <p>
+            Instantly identify and categorize defects in robotic arms during production processes.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
+            </svg>
+          </div>
+          <h3>Advanced ML Models</h3>
+          <p>
+            Powered by state-of-the-art machine learning algorithms trained on thousands of samples.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3>Quality Assurance</h3>
+          <p>
+            Reduce manufacturing defects by up to 98% with our precision detection system.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta">
+    <div class="container">
+      <h2>Ready to improve your manufacturing quality?</h2>
+      <p>Try our defect detection model now and see the difference in your production line.</p>
+      <li><a href="{{ url_for('home') }}">Model</a></li>
+      Try Our Model
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>RoboDetect VisionHub</h3>
+          <p>
+            Advanced robotic arm defect detection system using machine learning and computer vision.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}" class="active">About</a></li>
+            <li><a href="{{ url_for('home') }}">Model</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contact Info</h3>
+          <address>
+            <p>Rajkiya Engineering College Bijnor</p>
+            <p>UttarPradesh</p>
+          </address>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="currentYear"></span> Robotic Arms Defect Detection Model
+        </p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script> // Mobile Navigation Toggle
+    document.addEventListener('DOMContentLoaded', function () {
+      const menuIcon = document.getElementById('menuIcon');
+      const navLinks = document.getElementById('navLinks');
+
+      // Toggle navigation menu on mobile
+      menuIcon?.addEventListener('click', function () {
+        navLinks?.classList.toggle('show');
+
+        // Animate hamburger menu
+        const bars = menuIcon.querySelectorAll('.bar');
+        bars.forEach(bar => bar.classList.toggle('open'));
+      });
+
+      // Set current year in the footer
+      const currentYearElements = document.querySelectorAll('#currentYear');
+      const year = new Date().getFullYear();
+      currentYearElements.forEach(element => {
+        element.textContent = year;
+      });
+
+      // Contact form submission
+      const contactForm = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          // Change button text and disable
+          if (submitBtn) {
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+          }
+
+          // Simulate form submission
+          setTimeout(() => {
+            // Form data
+            const formData = {
+              name: document.getElementById('name')?.value,
+              email: document.getElementById('email')?.value,
+              subject: document.getElementById('subject')?.value,
+              message: document.getElementById('message')?.value
+            };
+
+            console.log('Form submitted with data:', formData);
+
+            // Show success message
+            showMessage('Message sent successfully! We will contact you soon.', 'success');
+
+            // Reset form
+            contactForm.reset();
+
+            // Reset button
+            if (submitBtn) {
+              submitBtn.textContent = 'Send Message';
+              submitBtn.disabled = false;
+            }
+          }, 1500);
+        });
+      }
+    });
+
+    // Function to show messages (success or error)
+    function showMessage(message, type) {
+      // Create message element
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${type}`;
+      messageEl.textContent = message;
+
+      // Add to the page
+      document.body.appendChild(messageEl);
+
+      // Add visible class with delay for animation
+      setTimeout(() => {
+        messageEl.classList.add('visible');
+      }, 10);
+
+      // Remove after delay
+      setTimeout(() => {
+        messageEl.classList.remove('visible');
+        setTimeout(() => {
+          messageEl.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    // Add these styles dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+        .message {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 15px 25px;
+          border-radius: 4px;
+          color: white;
+          z-index: 1000;
+          opacity: 0;
+          transform: translateX(30px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .message.visible {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        
+        .message.success {
+          background-color: #10b981;
+        }
+        
+        .message.error {
+          background-color: #ef4444;
+        }
+        
+        .bar.open:nth-child(1) {
+          transform: translateY(9px) rotate(45deg);
+        }
+        
+        .bar.open:nth-child(2) {
+          opacity: 0;
+        }
+        
+        .bar.open:nth-child(3) {
+          transform: translateY(-9px) rotate(-45deg);
+        }
+      `;
+
+    document.head.appendChild(style)</script>
+</body>
+
+</html>

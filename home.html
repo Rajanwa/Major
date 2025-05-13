@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="star.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <title>Robotic Arms Defect Detection Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #e2e2e2;
+      line-height: 1.6;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("https://img.freepik.com/free-photo/photorealistic-galaxy-background_23-2151064387.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      opacity: 0.15;
+      z-index: -1;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    /* Header & Navigation */
+    header {
+      background-color: rgba(16, 19, 34, 0.9);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #4cc9f0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #4cc9f0, #f72585);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .logo:hover {
+      transform: scale(1.05);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+    }
+    
+    .nav-links a {
+      font-weight: 500;
+      color: #e2e2e2;
+      position: relative;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    
+    .nav-links a:hover {
+      color: #4cc9f0;
+    }
+    
+    .nav-links a.active {
+      color: #4cc9f0;
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #4cc9f0, #f72585);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+    
+    .menu-icon {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .menu-icon .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #e2e2e2;
+      margin: 3px 0;
+      transition: all 0.3s ease;
+    }
+
+    /* Form Container */
+    .form-container {
+      background: rgba(22, 33, 62, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2.5rem;
+      margin-top: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .form-title {
+      color: #4cc9f0;
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 2px 10px rgba(76, 201, 240, 0.3);
+      letter-spacing: 1px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .form-control {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      color: #ffffff;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: #4cc9f0;
+      box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.25);
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+    
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    label {
+      color: #a0a0a0;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    
+    .col-md-4:hover label {
+      color: #4cc9f0;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(45deg, #4cc9f0, #7209b7);
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2.5rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(76, 201, 240, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(45deg, #7209b7, #4cc9f0);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(76, 201, 240, 0.6);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+    
+    .row {
+      margin-bottom: 0.5rem;
+    }
+    
+    .col-md-4 {
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .col-md-4:hover {
+      transform: translateY(-3px);
+    }
+    
+    /* Prediction */
+    .predict-dec {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(247, 37, 133, 0.1));
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f8f8f8;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(76, 201, 240, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(76, 201, 240, 0);
+      }
+    }
+    
+    .alert {
+      background: rgba(76, 201, 240, 0.1);
+      border-left: 4px solid #4cc9f0;
+      color: #e2e2e2;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+      .container {
+        width: 95%;
+        padding: 1rem 0;
+      }
+      
+      .form-container {
+        padding: 2rem 1.5rem;
+      }
+      
+      .form-title {
+        font-size: 1.8rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .menu-icon {
+        display: flex;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: -100%;
+        width: 100%;
+        flex-direction: column;
+        background-color: rgba(16, 19, 34, 0.95);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(8px);
+        padding: 2rem;
+        transition: all 0.3s ease;
+        gap: 1.5rem;
+        z-index: 999;
+      }
+      
+      .nav-links.show {
+        left: 0;
+      }
+      
+      .col-md-4 {
+        margin-bottom: 1rem;
+      }
+      
+      .predict-dec {
+        font-size: 1.5rem;
+        padding: 1rem;
+      }
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(22, 33, 62, 0.8);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, #4cc9f0, #7209b7);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(45deg, #7209b7, #4cc9f0);
+    }
+    
+    /* Input field number arrows */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="navbar">
+      <div class="logo">Robotic Arms Defect Detection Model</div>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('about') }}" >About</a></li>
+          <li><a href="{{ url_for('home') }}" class="active">Model</a></li>
+        </ul>
+      </nav>
+      <div class="menu-icon" id="menuIcon">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </header>
+  <div class="container">
+    <div class="form-container">
+        <h2 class="form-title">Robotic Fault Detection Input</h2>
+        <form method="POST" action="/predict">
+            <div class="row g-3">
+                <div class="col-md-4"><label>Current J0</label><input type="number" name="Current_J0" class="form-control" required></div>
+                <div class="col-md-4"><label>Temperature T0</label><input type="number" name="Temperature_T0" class="form-control" required></div>
+
+                <div class="col-md-4"><label>Current J1</label><input type="number" name="Current_J1" class="form-control" required></div>
+                <div class="col-md-4"><label>Temperature J1</label><input type="number" name="Temperature_J1" class="form-control" required></div>
+                <div class="col-md-4"><label>Current J2</label><input type="number" name="Current_J2" class="form-control" required></div>
+
+                <div class="col-md-4"><label>Temperature J2</label><input type="number" name="Temperature_J2" class="form-control" required></div>
+                <div class="col-md-4"><label>Current J3</label><input type="number" name="Current_J3" class="form-control" required></div>
+                <div class="col-md-4"><label>Temperature J3</label><input type="number" name="Temperature_J3" class="form-control" required></div>
+
+                <div class="col-md-4"><label>Current J4</label><input type="number" name="Current_J4" class="form-control" required></div>
+                <div class="col-md-4"><label>Temperature J4</label><input type="number" name="Temperature_J4" class="form-control" required></div>
+                <div class="col-md-4"><label>Current J5</label><input type="number" name="Current_J5" class="form-control" required></div>
+
+                <div class="col-md-4"><label>Temperature J5</label><input type="number" name="Temperature_J5" class="form-control" required></div>
+                <div class="col-md-4"><label>Speed J0</label><input type="number" name="Speed_J0" class="form-control" required></div>
+                <div class="col-md-4"><label>Speed J1</label><input type="number" name="Speed_J1" class="form-control" required></div>
+
+                <div class="col-md-4"><label>Speed J2</label><input type="number" name="Speed_J2" class="form-control" required></div>
+                <div class="col-md-4"><label>Speed J3</label><input type="number" name="Speed_J3" class="form-control" required></div>
+                <div class="col-md-4"><label>Speed J4</label><input type="number" name="Speed_J4" class="form-control" required></div>
+
+                <div class="col-md-4"><label>Speed J5</label><input type="number" name="Speed_J5" class="form-control" required></div>
+                <div class="col-md-4"><label>Tool Current</label><input type="number" name="Tool_current" class="form-control" required></div>
+                <div class="col-md-4"><label>Cycle</label><input type="number" name="cycle" class="form-control" required></div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg px-4">Predict</button>
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="alert alert-info mt-4 text-center" role="alert">
+            {{ prediction_text }}
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if prediction_text %}
+    <h3 class="predict-dec">{{ prediction_text }}</h3>
+    {% endif %}
+</div>
+
+<script>
+  // Mobile menu toggle
+  document.getElementById('menuIcon').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('show');
+  });
+  
+  // Form field animation
+  const inputs = document.querySelectorAll('.form-control');
+  
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      this.parentElement.classList.add('focused');
+    });
+    
+    input.addEventListener('blur', function() {
+      if (this.value === '') {
+        this.parentElement.classList.remove('focused');
+      }
+    });
+  });
+</script>
+
+</body>
+
+</html>
